@@ -11,102 +11,56 @@ import "./VestingMath.sol" ;
  * @title VestingManager
  * @author Alejandro Virelles <thesnakewitcher@gmail.com>
  * @notice A contract to manage vestings of ERC20 tokens 
- * @dev Each vesting occupies 4+3p slots in memory, where p is the amount of periods
+ * @dev Each vesting occupies 5+b slots in memory, where b is the number of beneficiaries
  */
 contract VestingManager is Ownable, FeeChargerERC20 {
 
     using VestingMath for VestingPeriod ;
-    using SafeERC20 for IERC20 ;
 
-    // TODO: consider to use uint128 for lastClaim and latestTimestamp
-    struct VestingData {
-        IERC20 token ;
-        uint256 lastClaim ;
-        address beneficiary ;
-        uint256 latestTimestamp ;
-    }
+    mapping (uint256 id => VestingPeriod) public vestingPeriods ;
 
-    mapping (uint256 id => VestingData) public vestingData ;
-    mapping (uint256 id => VestingPeriod[]) public vestingPeriods ;
-
-    event VestingCreated(uint256 indexed id, address indexed beneficiary, IERC20 indexed token);
-    event VestingClaimed(uint256 indexed id, uint256 indexed amount);
+    event VestingCreated(uint256 indexed id, address indexed owner, VestingPeriod vestingPeriod);
+    event VestingClaimed(uint256 indexed id);
+    event VestingEnded(uint256 indexed id);
 
     error InvalidCreationParams();
-    error InvalidBeneficiary(address sender);
-    error VestingNotStarted();
+    error InvalidRelease();
 
-    constructor(address feeToken, uint256 feeAmount) Ownable(_msgSender()) FeeChargerERC20(feeToken, feeAmount) {}
+    constructor(address feeToken_, uint256 feeAmount_) Ownable(_msgSender()) FeeChargerERC20(feeToken_, feeAmount_) {}
 
-    function create(IERC20 token, VestingPeriod[] calldata periods, address beneficiary) external {
+    function create(VestingPeriod calldata period) external {
+        require(period.checkCreation(), InvalidCreationParams()) ;
         _chargeFees(owner());
-        uint256 periodNumber = periods.length ;
-        require(
-            beneficiary != address(0) &&
-            address(token) != address(0) &&
-            periodNumber > 0,
-            InvalidCreationParams()
-        ) ;
 
-        (uint256 id, uint256 latestTimestamp, uint256 maxToRelease) = (_getVestingId(),0,0) ;
-        for(uint256 i ; i < periodNumber ; ++i ) {
-            maxToRelease += periods[i].maxToRelease() ;
-            vestingPeriods[id].push(periods[i]) ;
-            if (periods[i].endTime() > latestTimestamp) latestTimestamp = periods[i].endTime() ;
-        }
-        require(maxToRelease != 0, InvalidCreationParams());
-
-        token.safeTransferFrom(msg.sender, address(this), maxToRelease) ;
-        vestingData[id] = VestingData({
-            beneficiary: beneficiary,
-            token: token,
-            lastClaim: 0,
-            latestTimestamp: latestTimestamp 
-        }) ;
-        emit VestingCreated(id, msg.sender, token) ;
+        uint256 id = _getVestingId() ;
+        period.pay(msg.sender, address(this)) ;
+        vestingPeriods[id] = period ;
+        emit VestingCreated(id, msg.sender, period) ;
     }
 
-    /**
-     * @dev to use it as getter use it with `staticCall` or check
-     *      https://github.com/gnosis/util-contracts/blob/main/contracts/storage/StorageAccessible.sol
-     */
-    function release(uint256 id) external returns (uint256) {
-        VestingData memory data = vestingData[id] ; 
-        require(msg.sender == data.beneficiary, InvalidBeneficiary(msg.sender));
-        vestingData[id].lastClaim = block.timestamp  ;
+    /// @dev to use it as getter use it with `staticCall` or check https://github.com/gnosis/util-contracts/blob/main/contracts/storage/StorageAccessible.sol
+    function release(uint256 id) external {
+        VestingPeriod memory period = vestingPeriods[id] ;
+        require(period.checkRelease(), InvalidRelease()) ;
+        vestingPeriods[id].lastClaim = block.timestamp  ;
 
-        VestingPeriod[] memory periods = vestingPeriods[id] ;
-        (uint256 periodNumber, uint256 amount) = (periods.length, 0) ;
-        for(uint256 i ; i < periodNumber ; ++i) {
-            VestingPeriod memory period = periods[i] ;
-            uint256 released = period.toReleaseAt(data.lastClaim) ;
-            uint256 toRelease = period.toReleaseAt(block.timestamp) ;
-            uint256 periodAmount = toRelease - released ;
-            amount += periodAmount ;
-        }
-        require(amount != 0, VestingNotStarted() );
+        period.release(address(this)) ;
+        emit VestingClaimed(id) ;
 
-        data.token.safeTransfer(data.beneficiary, amount) ;
-        emit VestingClaimed(id, amount) ;
-        if (block.timestamp >= data.latestTimestamp) {
-            delete vestingData[id] ;
+        if (period.endedAt(block.timestamp)) {
             delete vestingPeriods[id] ;
+            emit VestingEnded(id) ;
         }
-        return amount ;
     }
 
     function releasable(uint256 id, uint256 timestamp) external view returns (uint256) {
-        VestingData memory data = vestingData[id] ; 
-        VestingPeriod[] memory periods = vestingPeriods[id] ;
-        (uint256 periodNumber, uint256 amount) = (periods.length, 0) ;
-        
-        for(uint256 i ; i < periodNumber ; ++i) {
-            VestingPeriod memory period = periods[i] ;
-            uint256 released = period.toReleaseAt(data.lastClaim) ;
-            uint256 toRelease = period.toReleaseAt(timestamp) ;
-            amount += toRelease - released ;
-        }
+        VestingPeriod memory period = vestingPeriods[id] ;
+        uint256 amount = period.toReleaseAt(timestamp) - period.toReleaseAt(period.lastClaim) ;
         return amount ;
+    }
+
+    function feeAmount() external view returns (uint256) {
+        return _feeAmount ;
     }
 
     /// @dev Note that `id` doesn't need to be unpredictable, just collision resistant

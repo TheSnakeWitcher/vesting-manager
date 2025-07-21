@@ -2,28 +2,79 @@
 pragma solidity ^0.8.0 ;
 pragma abicoder v2 ;
 
-struct VestingPeriod {
-    uint256 startTime ;
+import { IERC20, SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol" ;
 
+struct VestingPeriod {
+    IERC20 token ;
+    address[] beneficiaries ;
+    uint256 lastClaim ;
+
+    uint256 startTime ;
+    uint256 cycleAmount ;
     uint128 cycleDuration ;
     uint128 cycleNumber ;
-
-    uint256 cycleAmount ;
 }
 
 library VestingMath {
 
+    using SafeERC20 for IERC20 ;
+
+    function pay(VestingPeriod memory period, address from, address holder) internal {
+        period.token.safeTransferFrom(from, holder, maxToRelease(period)) ;
+    }
+
+    function release(VestingPeriod memory period, address from) internal {
+        checkRelease(period);
+        uint256 beneficiariesNumber = period.beneficiaries.length ;
+
+        if (beneficiariesNumber < 2) {
+            address to = period.beneficiaries[0] ;
+            period.token.safeTransferFrom(from, to, period.cycleAmount) ;
+        } else {
+            uint256 amountPerBeneficiary = period.cycleAmount / beneficiariesNumber ;
+            for(uint256 i ; i < beneficiariesNumber ; ++i ) {
+                period.token.safeTransferFrom(
+                    from,
+                    period.beneficiaries[i],
+                    amountPerBeneficiary
+                ) ;
+            }
+        }
+    }
+
     /// @notice determines whether a period ended as of timestamp 'at'
+    function checkCreation(VestingPeriod memory period) internal view returns (bool) {
+        return period.beneficiaries.length > 0 &&
+            address(period.token) != address(0) &&
+            period.startTime > block.timestamp &&
+            period.cycleDuration > 0 &&
+            period.cycleNumber > 0 &&
+            period.cycleAmount > 0 ;
+        
+    }
+
+    function checkRelease(VestingPeriod memory period) internal view returns (bool) {
+        bool notStarted = period.startTime > block.timestamp ;
+        if (notStarted) return false ;
+
+        uint256 released = toReleaseAt(period, period.lastClaim) ;
+        uint256 toRelease = toReleaseAt(period, block.timestamp) ;
+        if (toRelease - released == period.cycleAmount) return false ;
+
+        return true ;
+    }
+
+    /// @notice determines whether a vesting period is ended for timestamp 'at'
     function endedAt(VestingPeriod memory period, uint256 at) internal pure returns (bool) {
         return at > endTime(period) ;
     }
 
-    /// @notice the amount to release according the cycle for timestamp `at`
+    /// @notice the cumulative amount to release according the cycle for timestamp `at`
     function toReleaseAt(VestingPeriod memory period, uint256 at) internal pure returns (uint256) {
         if ( at < period.startTime ) return 0 ;
 
         uint256 cycleNumber = inCycle(period, at) ;
-        return cycleNumber * period.cycleAmount ;
+        return cycleAmountFor(period, cycleNumber) ;
     }
 
     /// @notice the `cycleNumber` of `period` for timestamp `at`
@@ -32,14 +83,22 @@ library VestingMath {
         return (cycle < period.cycleNumber) ? cycle + 1 : period.cycleNumber ;
     }
 
-    /// @notice the `endTime` for `period`
+    function cycleStartTimestamp(VestingPeriod memory period, uint256 cycleNumber) internal pure returns (uint256) {
+        return period.startTime + period.cycleDuration * cycleNumber ;
+    }
+
+    function cycleAmountFor(VestingPeriod memory period, uint256 cycleNumber) internal pure returns (uint256) {
+        return period.cycleAmount * cycleNumber ;
+    }
+
+    /// @notice the `endTime` for `period` or the last cycle start timestamp
     function endTime(VestingPeriod memory period) internal pure returns (uint256) {
-        return period.startTime + period.cycleDuration * period.cycleNumber ;
+        return cycleStartTimestamp(period, period.cycleNumber) ;
     }
 
     /// @notice the maximun amount to release for `period`
     function maxToRelease(VestingPeriod memory period) internal pure returns (uint256) {
-        return period.cycleNumber * period.cycleAmount ;
+        return cycleAmountFor(period, period.cycleNumber) ;
     }
 
 }
