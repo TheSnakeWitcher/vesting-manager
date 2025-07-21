@@ -6,7 +6,7 @@ import contractNames from "../data/contractNames.json"
 import { ethers } from "ethers";
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-    const { deployer } = await hre.getNamedAccounts();
+    const { deployer, user } = await hre.getNamedAccounts();
 
     const feeTokens: any = {
         bsc: {
@@ -22,7 +22,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         feeTokens[network.name] :
         (await hre.deployments.deploy(contractNames.MockERC20, {
             from: deployer,
-            args: [[deployer]],
+            args: [[deployer, user]],
             log: true,
             autoMine: true,
         })).address;
