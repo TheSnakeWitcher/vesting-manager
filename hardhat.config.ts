@@ -50,12 +50,12 @@ const config: HardhatUserConfig = {
         bscTestnet: {
             chainId: bscTestnet.id,
             url: bscTestnet.rpcUrls.default.http[0],
-            accounts: [PRIVATE_KEY!],
+            accounts: [PRIVATE_KEY, PRIVATE_KEY2],
         },
         polygonMumbai: {
             chainId: polygonMumbai.id,
             url: polygonMumbai.rpcUrls.default.http[0],
-            accounts: [PRIVATE_KEY!],
+            accounts: [PRIVATE_KEY, PRIVATE_KEY2],
         },
     }
 };
