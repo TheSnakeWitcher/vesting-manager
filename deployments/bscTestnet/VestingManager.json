@@ -1,0 +1,642 @@
+{
+  "address": "0x87E1e8cA301B020782359F973F2209789Af206bf",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "feeToken_",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "feeAmount_",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidCreationParams",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidRelease",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "SafeERC20FailedOperation",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "oldFeeAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newFeeAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "FeeAmountChanged",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "feePayer",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "feeTokenCharged",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "feeAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "FeeCharged",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "oldFeeToken",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "newFeeToken",
+          "type": "address"
+        }
+      ],
+      "name": "FeeTokenChanged",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "VestingClaimed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "components": [
+            {
+              "internalType": "contract IERC20",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "address[]",
+              "name": "beneficiaries",
+              "type": "address[]"
+            },
+            {
+              "internalType": "uint256",
+              "name": "lastClaim",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "startTime",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "cycleAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint128",
+              "name": "cycleDuration",
+              "type": "uint128"
+            },
+            {
+              "internalType": "uint128",
+              "name": "cycleNumber",
+              "type": "uint128"
+            }
+          ],
+          "indexed": false,
+          "internalType": "struct VestingPeriod",
+          "name": "vestingPeriod",
+          "type": "tuple"
+        }
+      ],
+      "name": "VestingCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "VestingEnded",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "contract IERC20",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "address[]",
+              "name": "beneficiaries",
+              "type": "address[]"
+            },
+            {
+              "internalType": "uint256",
+              "name": "lastClaim",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "startTime",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "cycleAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint128",
+              "name": "cycleDuration",
+              "type": "uint128"
+            },
+            {
+              "internalType": "uint128",
+              "name": "cycleNumber",
+              "type": "uint128"
+            }
+          ],
+          "internalType": "struct VestingPeriod",
+          "name": "period",
+          "type": "tuple"
+        }
+      ],
+      "name": "create",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "feeAmount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "feeToken",
+      "outputs": [
+        {
+          "internalType": "contract IERC20",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "releasable",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "release",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "vestingPeriods",
+      "outputs": [
+        {
+          "internalType": "contract IERC20",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lastClaim",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "startTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "cycleAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint128",
+          "name": "cycleDuration",
+          "type": "uint128"
+        },
+        {
+          "internalType": "uint128",
+          "name": "cycleNumber",
+          "type": "uint128"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x0cf78d2ba4ed908f7be118432f07af00eb689e02642fd163bea32157a16a120f",
+  "receipt": {
+    "to": null,
+    "from": "0xf830eeF4BB1F6F12eE6442B288f39Cd2772A9Bdc",
+    "contractAddress": "0x87E1e8cA301B020782359F973F2209789Af206bf",
+    "transactionIndex": 0,
+    "gasUsed": "904917",
+    "logsBloom": "0x00000000000000002000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000004000000000000000000000000000020000000000000000000c00000000000000004000000000000000400000000000000000000080000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xe00c7398355f3a8269271abf6a4d0f23072ea9593cb1748995d949249b82b98a",
+    "transactionHash": "0x0cf78d2ba4ed908f7be118432f07af00eb689e02642fd163bea32157a16a120f",
+    "logs": [
+      {
+        "transactionIndex": 0,
+        "blockNumber": 59069298,
+        "transactionHash": "0x0cf78d2ba4ed908f7be118432f07af00eb689e02642fd163bea32157a16a120f",
+        "address": "0x87E1e8cA301B020782359F973F2209789Af206bf",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x000000000000000000000000f830eef4bb1f6f12ee6442b288f39cd2772a9bdc"
+        ],
+        "data": "0x",
+        "logIndex": 0,
+        "blockHash": "0xe00c7398355f3a8269271abf6a4d0f23072ea9593cb1748995d949249b82b98a"
+      }
+    ],
+    "blockNumber": 59069298,
+    "cumulativeGasUsed": "904917",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0xd7Afa270b1490A89774Db3b8ABB9F0AB3D9BE53E",
+    "200000000000000000000"
+  ],
+  "numDeployments": 3,
+  "solcInputHash": "cce82b3fa9c9dc12ca32192069dc556d",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.29+commit.ab55807c\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"feeToken_\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"feeAmount_\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"InvalidCreationParams\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidRelease\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"name\":\"SafeERC20FailedOperation\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"oldFeeAmount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newFeeAmount\",\"type\":\"uint256\"}],\"name\":\"FeeAmountChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"feePayer\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"feeTokenCharged\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"feeAmount\",\"type\":\"uint256\"}],\"name\":\"FeeCharged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"oldFeeToken\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newFeeToken\",\"type\":\"address\"}],\"name\":\"FeeTokenChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"VestingClaimed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"contract IERC20\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"address[]\",\"name\":\"beneficiaries\",\"type\":\"address[]\"},{\"internalType\":\"uint256\",\"name\":\"lastClaim\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"startTime\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"cycleAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint128\",\"name\":\"cycleDuration\",\"type\":\"uint128\"},{\"internalType\":\"uint128\",\"name\":\"cycleNumber\",\"type\":\"uint128\"}],\"indexed\":false,\"internalType\":\"struct VestingPeriod\",\"name\":\"vestingPeriod\",\"type\":\"tuple\"}],\"name\":\"VestingCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"VestingEnded\",\"type\":\"event\"},{\"inputs\":[{\"components\":[{\"internalType\":\"contract IERC20\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"address[]\",\"name\":\"beneficiaries\",\"type\":\"address[]\"},{\"internalType\":\"uint256\",\"name\":\"lastClaim\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"startTime\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"cycleAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint128\",\"name\":\"cycleDuration\",\"type\":\"uint128\"},{\"internalType\":\"uint128\",\"name\":\"cycleNumber\",\"type\":\"uint128\"}],\"internalType\":\"struct VestingPeriod\",\"name\":\"period\",\"type\":\"tuple\"}],\"name\":\"create\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"feeAmount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"feeToken\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"releasable\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"release\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"vestingPeriods\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"lastClaim\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"startTime\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"cycleAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint128\",\"name\":\"cycleDuration\",\"type\":\"uint128\"},{\"internalType\":\"uint128\",\"name\":\"cycleNumber\",\"type\":\"uint128\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"author\":\"Alejandro Virelles <thesnakewitcher@gmail.com>\",\"details\":\"Each vesting occupies 5+b slots in memory, where b is the number of beneficiaries\",\"errors\":{\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account. (eg. `address(0)`)\"}],\"OwnableUnauthorizedAccount(address)\":[{\"details\":\"The caller account is not authorized to perform an operation.\"}],\"SafeERC20FailedOperation(address)\":[{\"details\":\"An operation with an ERC-20 token failed.\"}]},\"kind\":\"dev\",\"methods\":{\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"release(uint256)\":{\"details\":\"to use it as getter use it with `staticCall` or check https://github.com/gnosis/util-contracts/blob/main/contracts/storage/StorageAccessible.sol\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"title\":\"VestingManager\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"notice\":\"A contract to manage vestings of ERC20 tokens \",\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/VestingManager.sol\":\"VestingManager\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {Context} from \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * The initial owner is set to the address provided by the deployer. This can\\n * later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    /**\\n     * @dev The caller account is not authorized to perform an operation.\\n     */\\n    error OwnableUnauthorizedAccount(address account);\\n\\n    /**\\n     * @dev The owner is not a valid owner account. (eg. `address(0)`)\\n     */\\n    error OwnableInvalidOwner(address owner);\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the address provided by the deployer as the initial owner.\\n     */\\n    constructor(address initialOwner) {\\n        if (initialOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(initialOwner);\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        if (owner() != _msgSender()) {\\n            revert OwnableUnauthorizedAccount(_msgSender());\\n        }\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby disabling any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        if (newOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"license\":\"MIT\"},\"@openzeppelin/contracts/interfaces/IERC1363.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.1.0) (interfaces/IERC1363.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {IERC20} from \\\"./IERC20.sol\\\";\\nimport {IERC165} from \\\"./IERC165.sol\\\";\\n\\n/**\\n * @title IERC1363\\n * @dev Interface of the ERC-1363 standard as defined in the https://eips.ethereum.org/EIPS/eip-1363[ERC-1363].\\n *\\n * Defines an extension interface for ERC-20 tokens that supports executing code on a recipient contract\\n * after `transfer` or `transferFrom`, or code on a spender contract after `approve`, in a single transaction.\\n */\\ninterface IERC1363 is IERC20, IERC165 {\\n    /*\\n     * Note: the ERC-165 identifier for this interface is 0xb0202a11.\\n     * 0xb0202a11 ===\\n     *   bytes4(keccak256('transferAndCall(address,uint256)')) ^\\n     *   bytes4(keccak256('transferAndCall(address,uint256,bytes)')) ^\\n     *   bytes4(keccak256('transferFromAndCall(address,address,uint256)')) ^\\n     *   bytes4(keccak256('transferFromAndCall(address,address,uint256,bytes)')) ^\\n     *   bytes4(keccak256('approveAndCall(address,uint256)')) ^\\n     *   bytes4(keccak256('approveAndCall(address,uint256,bytes)'))\\n     */\\n\\n    /**\\n     * @dev Moves a `value` amount of tokens from the caller's account to `to`\\n     * and then calls {IERC1363Receiver-onTransferReceived} on `to`.\\n     * @param to The address which you want to transfer to.\\n     * @param value The amount of tokens to be transferred.\\n     * @return A boolean value indicating whether the operation succeeded unless throwing.\\n     */\\n    function transferAndCall(address to, uint256 value) external returns (bool);\\n\\n    /**\\n     * @dev Moves a `value` amount of tokens from the caller's account to `to`\\n     * and then calls {IERC1363Receiver-onTransferReceived} on `to`.\\n     * @param to The address which you want to transfer to.\\n     * @param value The amount of tokens to be transferred.\\n     * @param data Additional data with no specified format, sent in call to `to`.\\n     * @return A boolean value indicating whether the operation succeeded unless throwing.\\n     */\\n    function transferAndCall(address to, uint256 value, bytes calldata data) external returns (bool);\\n\\n    /**\\n     * @dev Moves a `value` amount of tokens from `from` to `to` using the allowance mechanism\\n     * and then calls {IERC1363Receiver-onTransferReceived} on `to`.\\n     * @param from The address which you want to send tokens from.\\n     * @param to The address which you want to transfer to.\\n     * @param value The amount of tokens to be transferred.\\n     * @return A boolean value indicating whether the operation succeeded unless throwing.\\n     */\\n    function transferFromAndCall(address from, address to, uint256 value) external returns (bool);\\n\\n    /**\\n     * @dev Moves a `value` amount of tokens from `from` to `to` using the allowance mechanism\\n     * and then calls {IERC1363Receiver-onTransferReceived} on `to`.\\n     * @param from The address which you want to send tokens from.\\n     * @param to The address which you want to transfer to.\\n     * @param value The amount of tokens to be transferred.\\n     * @param data Additional data with no specified format, sent in call to `to`.\\n     * @return A boolean value indicating whether the operation succeeded unless throwing.\\n     */\\n    function transferFromAndCall(address from, address to, uint256 value, bytes calldata data) external returns (bool);\\n\\n    /**\\n     * @dev Sets a `value` amount of tokens as the allowance of `spender` over the\\n     * caller's tokens and then calls {IERC1363Spender-onApprovalReceived} on `spender`.\\n     * @param spender The address which will spend the funds.\\n     * @param value The amount of tokens to be spent.\\n     * @return A boolean value indicating whether the operation succeeded unless throwing.\\n     */\\n    function approveAndCall(address spender, uint256 value) external returns (bool);\\n\\n    /**\\n     * @dev Sets a `value` amount of tokens as the allowance of `spender` over the\\n     * caller's tokens and then calls {IERC1363Spender-onApprovalReceived} on `spender`.\\n     * @param spender The address which will spend the funds.\\n     * @param value The amount of tokens to be spent.\\n     * @param data Additional data with no specified format, sent in call to `spender`.\\n     * @return A boolean value indicating whether the operation succeeded unless throwing.\\n     */\\n    function approveAndCall(address spender, uint256 value, bytes calldata data) external returns (bool);\\n}\\n\",\"keccak256\":\"0x9b6b3e7803bc5f2f8cd7ad57db8ac1def61a9930a5a3107df4882e028a9605d7\",\"license\":\"MIT\"},\"@openzeppelin/contracts/interfaces/IERC165.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (interfaces/IERC165.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {IERC165} from \\\"../utils/introspection/IERC165.sol\\\";\\n\",\"keccak256\":\"0xde7e9fd9aee8d4f40772f96bb3b58836cbc6dfc0227014a061947f8821ea9724\",\"license\":\"MIT\"},\"@openzeppelin/contracts/interfaces/IERC20.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (interfaces/IERC20.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {IERC20} from \\\"../token/ERC20/IERC20.sol\\\";\\n\",\"keccak256\":\"0xce41876e78d1badc0512229b4d14e4daf83bc1003d7f83978d18e0e56f965b9c\",\"license\":\"MIT\"},\"@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.1.0) (token/ERC20/IERC20.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Interface of the ERC-20 standard as defined in the ERC.\\n */\\ninterface IERC20 {\\n    /**\\n     * @dev Emitted when `value` tokens are moved from one account (`from`) to\\n     * another (`to`).\\n     *\\n     * Note that `value` may be zero.\\n     */\\n    event Transfer(address indexed from, address indexed to, uint256 value);\\n\\n    /**\\n     * @dev Emitted when the allowance of a `spender` for an `owner` is set by\\n     * a call to {approve}. `value` is the new allowance.\\n     */\\n    event Approval(address indexed owner, address indexed spender, uint256 value);\\n\\n    /**\\n     * @dev Returns the value of tokens in existence.\\n     */\\n    function totalSupply() external view returns (uint256);\\n\\n    /**\\n     * @dev Returns the value of tokens owned by `account`.\\n     */\\n    function balanceOf(address account) external view returns (uint256);\\n\\n    /**\\n     * @dev Moves a `value` amount of tokens from the caller's account to `to`.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * Emits a {Transfer} event.\\n     */\\n    function transfer(address to, uint256 value) external returns (bool);\\n\\n    /**\\n     * @dev Returns the remaining number of tokens that `spender` will be\\n     * allowed to spend on behalf of `owner` through {transferFrom}. This is\\n     * zero by default.\\n     *\\n     * This value changes when {approve} or {transferFrom} are called.\\n     */\\n    function allowance(address owner, address spender) external view returns (uint256);\\n\\n    /**\\n     * @dev Sets a `value` amount of tokens as the allowance of `spender` over the\\n     * caller's tokens.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * IMPORTANT: Beware that changing an allowance with this method brings the risk\\n     * that someone may use both the old and the new allowance by unfortunate\\n     * transaction ordering. One possible solution to mitigate this race\\n     * condition is to first reduce the spender's allowance to 0 and set the\\n     * desired value afterwards:\\n     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729\\n     *\\n     * Emits an {Approval} event.\\n     */\\n    function approve(address spender, uint256 value) external returns (bool);\\n\\n    /**\\n     * @dev Moves a `value` amount of tokens from `from` to `to` using the\\n     * allowance mechanism. `value` is then deducted from the caller's\\n     * allowance.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * Emits a {Transfer} event.\\n     */\\n    function transferFrom(address from, address to, uint256 value) external returns (bool);\\n}\\n\",\"keccak256\":\"0xe06a3f08a987af6ad2e1c1e774405d4fe08f1694b67517438b467cecf0da0ef7\",\"license\":\"MIT\"},\"@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.3.0) (token/ERC20/utils/SafeERC20.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {IERC20} from \\\"../IERC20.sol\\\";\\nimport {IERC1363} from \\\"../../../interfaces/IERC1363.sol\\\";\\n\\n/**\\n * @title SafeERC20\\n * @dev Wrappers around ERC-20 operations that throw on failure (when the token\\n * contract returns false). Tokens that return no value (and instead revert or\\n * throw on failure) are also supported, non-reverting calls are assumed to be\\n * successful.\\n * To use this library you can add a `using SafeERC20 for IERC20;` statement to your contract,\\n * which allows you to call the safe operations as `token.safeTransfer(...)`, etc.\\n */\\nlibrary SafeERC20 {\\n    /**\\n     * @dev An operation with an ERC-20 token failed.\\n     */\\n    error SafeERC20FailedOperation(address token);\\n\\n    /**\\n     * @dev Indicates a failed `decreaseAllowance` request.\\n     */\\n    error SafeERC20FailedDecreaseAllowance(address spender, uint256 currentAllowance, uint256 requestedDecrease);\\n\\n    /**\\n     * @dev Transfer `value` amount of `token` from the calling contract to `to`. If `token` returns no value,\\n     * non-reverting calls are assumed to be successful.\\n     */\\n    function safeTransfer(IERC20 token, address to, uint256 value) internal {\\n        _callOptionalReturn(token, abi.encodeCall(token.transfer, (to, value)));\\n    }\\n\\n    /**\\n     * @dev Transfer `value` amount of `token` from `from` to `to`, spending the approval given by `from` to the\\n     * calling contract. If `token` returns no value, non-reverting calls are assumed to be successful.\\n     */\\n    function safeTransferFrom(IERC20 token, address from, address to, uint256 value) internal {\\n        _callOptionalReturn(token, abi.encodeCall(token.transferFrom, (from, to, value)));\\n    }\\n\\n    /**\\n     * @dev Variant of {safeTransfer} that returns a bool instead of reverting if the operation is not successful.\\n     */\\n    function trySafeTransfer(IERC20 token, address to, uint256 value) internal returns (bool) {\\n        return _callOptionalReturnBool(token, abi.encodeCall(token.transfer, (to, value)));\\n    }\\n\\n    /**\\n     * @dev Variant of {safeTransferFrom} that returns a bool instead of reverting if the operation is not successful.\\n     */\\n    function trySafeTransferFrom(IERC20 token, address from, address to, uint256 value) internal returns (bool) {\\n        return _callOptionalReturnBool(token, abi.encodeCall(token.transferFrom, (from, to, value)));\\n    }\\n\\n    /**\\n     * @dev Increase the calling contract's allowance toward `spender` by `value`. If `token` returns no value,\\n     * non-reverting calls are assumed to be successful.\\n     *\\n     * IMPORTANT: If the token implements ERC-7674 (ERC-20 with temporary allowance), and if the \\\"client\\\"\\n     * smart contract uses ERC-7674 to set temporary allowances, then the \\\"client\\\" smart contract should avoid using\\n     * this function. Performing a {safeIncreaseAllowance} or {safeDecreaseAllowance} operation on a token contract\\n     * that has a non-zero temporary allowance (for that particular owner-spender) will result in unexpected behavior.\\n     */\\n    function safeIncreaseAllowance(IERC20 token, address spender, uint256 value) internal {\\n        uint256 oldAllowance = token.allowance(address(this), spender);\\n        forceApprove(token, spender, oldAllowance + value);\\n    }\\n\\n    /**\\n     * @dev Decrease the calling contract's allowance toward `spender` by `requestedDecrease`. If `token` returns no\\n     * value, non-reverting calls are assumed to be successful.\\n     *\\n     * IMPORTANT: If the token implements ERC-7674 (ERC-20 with temporary allowance), and if the \\\"client\\\"\\n     * smart contract uses ERC-7674 to set temporary allowances, then the \\\"client\\\" smart contract should avoid using\\n     * this function. Performing a {safeIncreaseAllowance} or {safeDecreaseAllowance} operation on a token contract\\n     * that has a non-zero temporary allowance (for that particular owner-spender) will result in unexpected behavior.\\n     */\\n    function safeDecreaseAllowance(IERC20 token, address spender, uint256 requestedDecrease) internal {\\n        unchecked {\\n            uint256 currentAllowance = token.allowance(address(this), spender);\\n            if (currentAllowance < requestedDecrease) {\\n                revert SafeERC20FailedDecreaseAllowance(spender, currentAllowance, requestedDecrease);\\n            }\\n            forceApprove(token, spender, currentAllowance - requestedDecrease);\\n        }\\n    }\\n\\n    /**\\n     * @dev Set the calling contract's allowance toward `spender` to `value`. If `token` returns no value,\\n     * non-reverting calls are assumed to be successful. Meant to be used with tokens that require the approval\\n     * to be set to zero before setting it to a non-zero value, such as USDT.\\n     *\\n     * NOTE: If the token implements ERC-7674, this function will not modify any temporary allowance. This function\\n     * only sets the \\\"standard\\\" allowance. Any temporary allowance will remain active, in addition to the value being\\n     * set here.\\n     */\\n    function forceApprove(IERC20 token, address spender, uint256 value) internal {\\n        bytes memory approvalCall = abi.encodeCall(token.approve, (spender, value));\\n\\n        if (!_callOptionalReturnBool(token, approvalCall)) {\\n            _callOptionalReturn(token, abi.encodeCall(token.approve, (spender, 0)));\\n            _callOptionalReturn(token, approvalCall);\\n        }\\n    }\\n\\n    /**\\n     * @dev Performs an {ERC1363} transferAndCall, with a fallback to the simple {ERC20} transfer if the target has no\\n     * code. This can be used to implement an {ERC721}-like safe transfer that rely on {ERC1363} checks when\\n     * targeting contracts.\\n     *\\n     * Reverts if the returned value is other than `true`.\\n     */\\n    function transferAndCallRelaxed(IERC1363 token, address to, uint256 value, bytes memory data) internal {\\n        if (to.code.length == 0) {\\n            safeTransfer(token, to, value);\\n        } else if (!token.transferAndCall(to, value, data)) {\\n            revert SafeERC20FailedOperation(address(token));\\n        }\\n    }\\n\\n    /**\\n     * @dev Performs an {ERC1363} transferFromAndCall, with a fallback to the simple {ERC20} transferFrom if the target\\n     * has no code. This can be used to implement an {ERC721}-like safe transfer that rely on {ERC1363} checks when\\n     * targeting contracts.\\n     *\\n     * Reverts if the returned value is other than `true`.\\n     */\\n    function transferFromAndCallRelaxed(\\n        IERC1363 token,\\n        address from,\\n        address to,\\n        uint256 value,\\n        bytes memory data\\n    ) internal {\\n        if (to.code.length == 0) {\\n            safeTransferFrom(token, from, to, value);\\n        } else if (!token.transferFromAndCall(from, to, value, data)) {\\n            revert SafeERC20FailedOperation(address(token));\\n        }\\n    }\\n\\n    /**\\n     * @dev Performs an {ERC1363} approveAndCall, with a fallback to the simple {ERC20} approve if the target has no\\n     * code. This can be used to implement an {ERC721}-like safe transfer that rely on {ERC1363} checks when\\n     * targeting contracts.\\n     *\\n     * NOTE: When the recipient address (`to`) has no code (i.e. is an EOA), this function behaves as {forceApprove}.\\n     * Opposedly, when the recipient address (`to`) has code, this function only attempts to call {ERC1363-approveAndCall}\\n     * once without retrying, and relies on the returned value to be true.\\n     *\\n     * Reverts if the returned value is other than `true`.\\n     */\\n    function approveAndCallRelaxed(IERC1363 token, address to, uint256 value, bytes memory data) internal {\\n        if (to.code.length == 0) {\\n            forceApprove(token, to, value);\\n        } else if (!token.approveAndCall(to, value, data)) {\\n            revert SafeERC20FailedOperation(address(token));\\n        }\\n    }\\n\\n    /**\\n     * @dev Imitates a Solidity high-level call (i.e. a regular function call to a contract), relaxing the requirement\\n     * on the return value: the return value is optional (but if data is returned, it must not be false).\\n     * @param token The token targeted by the call.\\n     * @param data The call data (encoded using abi.encode or one of its variants).\\n     *\\n     * This is a variant of {_callOptionalReturnBool} that reverts if call fails to meet the requirements.\\n     */\\n    function _callOptionalReturn(IERC20 token, bytes memory data) private {\\n        uint256 returnSize;\\n        uint256 returnValue;\\n        assembly (\\\"memory-safe\\\") {\\n            let success := call(gas(), token, 0, add(data, 0x20), mload(data), 0, 0x20)\\n            // bubble errors\\n            if iszero(success) {\\n                let ptr := mload(0x40)\\n                returndatacopy(ptr, 0, returndatasize())\\n                revert(ptr, returndatasize())\\n            }\\n            returnSize := returndatasize()\\n            returnValue := mload(0)\\n        }\\n\\n        if (returnSize == 0 ? address(token).code.length == 0 : returnValue != 1) {\\n            revert SafeERC20FailedOperation(address(token));\\n        }\\n    }\\n\\n    /**\\n     * @dev Imitates a Solidity high-level call (i.e. a regular function call to a contract), relaxing the requirement\\n     * on the return value: the return value is optional (but if data is returned, it must not be false).\\n     * @param token The token targeted by the call.\\n     * @param data The call data (encoded using abi.encode or one of its variants).\\n     *\\n     * This is a variant of {_callOptionalReturn} that silently catches all reverts and returns a bool instead.\\n     */\\n    function _callOptionalReturnBool(IERC20 token, bytes memory data) private returns (bool) {\\n        bool success;\\n        uint256 returnSize;\\n        uint256 returnValue;\\n        assembly (\\\"memory-safe\\\") {\\n            success := call(gas(), token, 0, add(data, 0x20), mload(data), 0, 0x20)\\n            returnSize := returndatasize()\\n            returnValue := mload(0)\\n        }\\n        return success && (returnSize == 0 ? address(token).code.length > 0 : returnValue == 1);\\n    }\\n}\\n\",\"keccak256\":\"0x982c5cb790ab941d1e04f807120a71709d4c313ba0bfc16006447ffbd27fbbd5\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    function _contextSuffixLength() internal view virtual returns (uint256) {\\n        return 0;\\n    }\\n}\\n\",\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/introspection/IERC165.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.1.0) (utils/introspection/IERC165.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Interface of the ERC-165 standard, as defined in the\\n * https://eips.ethereum.org/EIPS/eip-165[ERC].\\n *\\n * Implementers can declare support of contract interfaces, which can then be\\n * queried by others ({ERC165Checker}).\\n *\\n * For an implementation, see {ERC165}.\\n */\\ninterface IERC165 {\\n    /**\\n     * @dev Returns true if this contract implements the interface defined by\\n     * `interfaceId`. See the corresponding\\n     * https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[ERC section]\\n     * to learn more about how these ids are created.\\n     *\\n     * This function call must use less than 30 000 gas.\\n     */\\n    function supportsInterface(bytes4 interfaceId) external view returns (bool);\\n}\\n\",\"keccak256\":\"0x79796192ec90263f21b464d5bc90b777a525971d3de8232be80d9c4f9fb353b8\",\"license\":\"MIT\"},\"@thesnakewitcher/contracts-fees/contracts/FeeChargerERC20.sol\":{\"content\":\"//SPDX-License-Identifier: MIT\\npragma solidity ^0.8.25 ;\\npragma abicoder v2;\\n\\n\\nimport \\\"@openzeppelin/contracts/utils/Context.sol\\\" ;\\nimport { SafeERC20 , IERC20 } from \\\"@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol\\\" ;\\nimport { FeeChargerComponentERC20 } from \\\"./components/FeeChargerComponentERC20.sol\\\" ;\\nimport { FeeChargerComponentAmountStatic } from \\\"./components/FeeChargerComponentAmountStatic.sol\\\" ;\\n\\n\\ncontract FeeChargerERC20 is FeeChargerComponentERC20, FeeChargerComponentAmountStatic {\\n\\n    using SafeERC20 for IERC20 ;\\n\\n    constructor(address feeToken_, uint256 feeAmount_) FeeChargerComponentERC20(feeToken_) FeeChargerComponentAmountStatic(feeAmount_) {}\\n\\n    /// @dev Non `address(0)-destination-safe`\\n    function _chargeFees(address feeReceiver) internal virtual {\\n        address feePayer = _msgSender() ;\\n        uint256 fee = _feeAmount ;\\n\\n        _feeToken.safeTransferFrom(feePayer, feeReceiver, fee) ;\\n        emit FeeCharged(feePayer, address(_feeToken), fee) ;\\n    }\\n\\n}\\n\",\"keccak256\":\"0xf004401fb28bc2d6292a13dcb76e0281d8ed878d55a6fd953556eed16a6717cf\",\"license\":\"MIT\"},\"@thesnakewitcher/contracts-fees/contracts/components/FeeChargerComponentAmountStatic.sol\":{\"content\":\"//SPDX-License-Identifier: MIT\\npragma solidity ^0.8.25 ;\\npragma abicoder v2;\\n\\n\\n/**\\n * @title FeeChargerComponentAmountStatic\\n * @dev No access control mechanis is used by default, it must be configured by\\n *      developer according to applications needs\\n */\\nabstract contract FeeChargerComponentAmountStatic {\\n\\n    uint256 internal _feeAmount ;\\n\\n    event FeeAmountChanged(uint256 oldFeeAmount, uint256 newFeeAmount) ;\\n\\n    constructor(uint256 feeAmount_) {\\n        _feeAmount = feeAmount_ ;\\n    }\\n\\n    function _setFeeAmount(uint256 newFeeAmount) internal virtual {\\n        uint256 oldFeeAmount = _feeAmount ;\\n        _feeAmount = newFeeAmount ;\\n        emit FeeAmountChanged(oldFeeAmount,newFeeAmount) ;\\n    }\\n\\n}\\n\",\"keccak256\":\"0x36c21e6c53bb26ae4f27fda10d68cd1ac1368025d29f5b17f522bd1519a738ac\",\"license\":\"MIT\"},\"@thesnakewitcher/contracts-fees/contracts/components/FeeChargerComponentERC20.sol\":{\"content\":\"//SPDX-License-Identifier: MIT\\npragma solidity ^0.8.25 ;\\npragma abicoder v2;\\n\\n\\nimport { IERC20 } from \\\"@openzeppelin/contracts/token/ERC20/IERC20.sol\\\" ;\\nimport \\\"@openzeppelin/contracts/utils/Context.sol\\\" ;\\n\\n\\ncontract FeeChargerComponentERC20 is Context {\\n\\n    IERC20 internal _feeToken ;\\n\\n    event FeeTokenChanged(address oldFeeToken, address newFeeToken) ;\\n    event FeeCharged(address indexed feePayer,address indexed feeTokenCharged, uint256 feeAmount) ;\\n\\n    constructor(address feeToken_) {\\n        _feeToken = IERC20(feeToken_) ;\\n    }\\n\\n    function feeToken() public view returns (IERC20) {\\n        return _feeToken ;\\n    }\\n\\n    function _setFeeToken(address newFeeToken) internal {\\n        address oldFeeToken = address(_feeToken) ;\\n        _feeToken = IERC20(newFeeToken) ;\\n        emit FeeTokenChanged(oldFeeToken,newFeeToken) ;\\n    }\\n\\n}\\n\",\"keccak256\":\"0x962ab7c7c70a68a1c979c40855cda13c3c672269f6223f7ac101b44994ad4e85\",\"license\":\"MIT\"},\"contracts/VestingManager.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0 ;\\npragma abicoder v2 ;\\n\\nimport { IERC20, SafeERC20 } from \\\"@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol\\\" ;\\nimport { Ownable } from \\\"@openzeppelin/contracts/access/Ownable.sol\\\" ;\\nimport { FeeChargerERC20 } from \\\"@thesnakewitcher/contracts-fees/contracts/FeeChargerERC20.sol\\\" ;\\nimport \\\"./VestingMath.sol\\\" ;\\n\\n/**\\n * @title VestingManager\\n * @author Alejandro Virelles <thesnakewitcher@gmail.com>\\n * @notice A contract to manage vestings of ERC20 tokens \\n * @dev Each vesting occupies 5+b slots in memory, where b is the number of beneficiaries\\n */\\ncontract VestingManager is Ownable, FeeChargerERC20 {\\n\\n    using VestingMath for VestingPeriod ;\\n\\n    mapping (uint256 id => VestingPeriod) public vestingPeriods ;\\n\\n    event VestingCreated(uint256 indexed id, address indexed owner, VestingPeriod vestingPeriod);\\n    event VestingClaimed(uint256 indexed id);\\n    event VestingEnded(uint256 indexed id);\\n\\n    error InvalidCreationParams();\\n    error InvalidRelease();\\n\\n    constructor(address feeToken_, uint256 feeAmount_) Ownable(_msgSender()) FeeChargerERC20(feeToken_, feeAmount_) {}\\n\\n    function create(VestingPeriod calldata period) external {\\n        require(period.checkCreation(), InvalidCreationParams()) ;\\n        _chargeFees(owner());\\n\\n        uint256 id = _getVestingId() ;\\n        period.pay(msg.sender, address(this)) ;\\n        vestingPeriods[id] = period ;\\n        emit VestingCreated(id, msg.sender, period) ;\\n    }\\n\\n    /// @dev to use it as getter use it with `staticCall` or check https://github.com/gnosis/util-contracts/blob/main/contracts/storage/StorageAccessible.sol\\n    function release(uint256 id) external {\\n        VestingPeriod memory period = vestingPeriods[id] ;\\n        require(period.checkRelease(), InvalidRelease()) ;\\n        vestingPeriods[id].lastClaim = block.timestamp  ;\\n\\n        period.release() ;\\n        emit VestingClaimed(id) ;\\n\\n        if (period.endedAt(block.timestamp)) {\\n            delete vestingPeriods[id] ;\\n            emit VestingEnded(id) ;\\n        }\\n    }\\n\\n    function releasable(uint256 id, uint256 timestamp) external view returns (uint256) {\\n        VestingPeriod memory period = vestingPeriods[id] ;\\n        uint256 amount = period.toReleaseAt(timestamp) - period.toReleaseAt(period.lastClaim) ;\\n        return amount ;\\n    }\\n\\n    function feeAmount() external view returns (uint256) {\\n        return _feeAmount ;\\n    }\\n\\n    /// @dev Note that `id` doesn't need to be unpredictable, just collision resistant\\n    function _getVestingId() private view returns (uint256) {\\n        return uint256(keccak256(bytes.concat(\\n            bytes32(block.chainid),\\n            bytes32(block.number),\\n            bytes32(block.timestamp),\\n            bytes32(block.prevrandao),\\n            bytes32(bytes20(msg.sender))\\n        ))) ;\\n    }\\n\\n}\\n\",\"keccak256\":\"0x7c06f024ce390fe769f1f5d1cf764cd280699a4c196db75bf4757f97b4e80b1e\",\"license\":\"MIT\"},\"contracts/VestingMath.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0 ;\\npragma abicoder v2 ;\\n\\nimport { IERC20, SafeERC20 } from \\\"@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol\\\" ;\\n\\nstruct VestingPeriod {\\n    IERC20 token ;\\n    address[] beneficiaries ;\\n    uint256 lastClaim ;\\n\\n    uint256 startTime ;\\n    uint256 cycleAmount ;\\n    uint128 cycleDuration ;\\n    uint128 cycleNumber ;\\n}\\n\\nlibrary VestingMath {\\n\\n    using SafeERC20 for IERC20 ;\\n\\n    function pay(VestingPeriod memory period, address from, address holder) internal {\\n        period.token.safeTransferFrom(from, holder, maxToRelease(period)) ;\\n    }\\n\\n    function release(VestingPeriod memory period) internal {\\n        checkRelease(period);\\n        uint256 beneficiariesNumber = period.beneficiaries.length ;\\n\\n        uint256 cycleAmount = toReleaseAt(period, block.timestamp) - toReleaseAt(period, period.lastClaim) ;\\n        if (beneficiariesNumber < 2) {\\n            address to = period.beneficiaries[0] ;\\n            period.token.safeTransfer(to, cycleAmount) ;\\n        } else {\\n            uint256 amountPerBeneficiary = cycleAmount / beneficiariesNumber ;\\n            for(uint256 i ; i < beneficiariesNumber ; ++i ) {\\n                period.token.safeTransfer(\\n                    period.beneficiaries[i],\\n                    amountPerBeneficiary\\n                ) ;\\n            }\\n        }\\n    }\\n\\n    /// @notice determines whether a period ended as of timestamp 'at'\\n    function checkCreation(VestingPeriod memory period) internal view returns (bool) {\\n        return period.beneficiaries.length > 0 &&\\n            address(period.token) != address(0) &&\\n            period.startTime > block.timestamp &&\\n            period.cycleDuration > 0 &&\\n            period.cycleNumber > 0 &&\\n            period.cycleAmount > 0 ;\\n        \\n    }\\n\\n    function checkRelease(VestingPeriod memory period) internal view returns (bool) {\\n        bool notStarted = period.startTime > block.timestamp ;\\n        if (notStarted) return false ;\\n\\n        uint256 released = toReleaseAt(period, period.lastClaim) ;\\n        uint256 toRelease = toReleaseAt(period, block.timestamp) ;\\n        if (toRelease - released < 0) return false ;\\n\\n        return true ;\\n    }\\n\\n    /// @notice determines whether a vesting period is ended for timestamp 'at'\\n    function endedAt(VestingPeriod memory period, uint256 at) internal pure returns (bool) {\\n        return at > endTime(period) ;\\n    }\\n\\n    /// @notice the cumulative amount to release according the cycle for timestamp `at`\\n    function toReleaseAt(VestingPeriod memory period, uint256 at) internal pure returns (uint256) {\\n        if ( at < period.startTime ) return 0 ;\\n\\n        uint256 cycleNumber = inCycle(period, at) ;\\n        return cycleAmountFor(period, cycleNumber) ;\\n    }\\n\\n    /// @notice the `cycleNumber` of `period` for timestamp `at`\\n    function inCycle(VestingPeriod memory period, uint256 at) internal pure returns (uint256) {\\n        uint256 cycle = (at - period.startTime) / period.cycleDuration ;\\n        return (cycle < period.cycleNumber) ? cycle + 1 : period.cycleNumber ;\\n    }\\n\\n    function cycleStartTimestamp(VestingPeriod memory period, uint256 cycleNumber) internal pure returns (uint256) {\\n        return period.startTime + period.cycleDuration * cycleNumber ;\\n    }\\n\\n    function cycleAmountFor(VestingPeriod memory period, uint256 cycleNumber) internal pure returns (uint256) {\\n        return period.cycleAmount * cycleNumber ;\\n    }\\n\\n    /// @notice the `endTime` for `period` or the last cycle start timestamp\\n    function endTime(VestingPeriod memory period) internal pure returns (uint256) {\\n        return cycleStartTimestamp(period, period.cycleNumber) ;\\n    }\\n\\n    /// @notice the maximun amount to release for `period`\\n    function maxToRelease(VestingPeriod memory period) internal pure returns (uint256) {\\n        return cycleAmountFor(period, period.cycleNumber) ;\\n    }\\n\\n}\\n\",\"keccak256\":\"0x6001952bb6491001cf1777b743d3b55ea4450c43f7f931483df0588883b752ef\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60803460d957601f610f0d38819003918201601f19168301916001600160401b0383118484101760de57808492604094855283398101031260d95780516001600160a01b038116919082900360d95760200151331560c35760008054336001600160a01b0319821681178355604051949290916001600160a01b0316907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09080a3600180546001600160a01b031916919091179055600255610e1890816100f58239f35b631e4fbdf760e01b600052600060045260246000fd5b600080fd5b634e487b7160e01b600052604160045260246000fdfe608080604052600436101561001357600080fd5b60003560e01c9081632272d907146109675750806337bdc99b1461067057806342d00501146105fe578063647846a5146105d557806369e15404146105b7578063715018a61461055e5780638da5cb5b14610535578063dbc035ca146101145763f2fde38b1461008257600080fd5b3461010f57602036600319011261010f576004356001600160a01b0381169081900361010f576100b0610ccc565b80156100f957600080546001600160a01b03198116831782556001600160a01b0316907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09080a3005b631e4fbdf760e01b600052600060045260246000fd5b600080fd5b3461010f57602036600319011261010f5760043567ffffffffffffffff811161010f578060040181360360e060031982011261010f576101543683610af2565b60208101515115159081610521575b81610513575b816104fc575b816104e5575b816104d7575b50156104c65760005460025460015490916101a69183916001600160a01b0390811691339116610d37565b6001546040519182526001600160a01b03169033907f945458c62aa39df7a4d87d6c4dbaaab7de5d870c9a1fe40e2b7571d84f158a8d90602090a360405160208101904682524360408201524260608201524460808201526bffffffffffffffffffffffff193360601b1660a082015260a0815261022560c082610a9c565b519020906102666102363685610af2565b61025c60018060a01b038251169160806001600160801b0360c083015116910151610acb565b9030903390610d37565b600082815260036020526040902083356001600160a01b0381169081900361010f5781546001600160a01b03191617815560018101946024810135926022190183121561010f578281019560048701359667ffffffffffffffff881161010f57602401968060051b3603881361010f576000976801000000000000000082116104b257825482845580831061048c575b50918852602088209188905b82821061046757505050506044810135806002840155606482013580600385015560848301359182600486015560a48401936001600160801b0361034586610be3565b1695600560c48301976001600160801b03196103608a610be3565b60801b1617910155604051602081526101008101999097906001600160a01b039061038a90610a56565b166020890152016024600482013591019867ffffffffffffffff8211610463578160051b36038a1361046357819060e060408a015252610120870198908a5b8181106104375750505061041d6001600160801b039461042894889794879460607f76c868619214808c7d24612303228783ea40797d4cbe9bee69497462450d726d9b0152608089015260a0880152610ade565b1660c0850152610ade565b1660e08201528033940390a380f35b919990919060019060209081906001600160a01b036104558f610a56565b168152019b019291016103c9565b8a80fd5b8035916001600160a01b03831683036104635760206001920192818601550190610302565b838a528260208b2091820191015b8181106104a757506102f6565b8a815560010161049a565b634e487b7160e01b89526041600452602489fd5b6327a449e360e01b60005260046000fd5b60809150015115158461017b565b60c08101516001600160801b031615159150610175565b60a08101516001600160801b03161515915061016f565b606081015142109150610169565b80516001600160a01b031615159150610163565b3461010f57600036600319011261010f576000546040516001600160a01b039091168152602090f35b3461010f57600036600319011261010f57610577610ccc565b600080546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b3461010f57600036600319011261010f576020600254604051908152f35b3461010f57600036600319011261010f576001546040516001600160a01b039091168152602090f35b3461010f57602036600319011261010f57600435600052600360205260c0604060002060018060a01b0381541690600281015490600381015460056004830154920154926040519485526020850152604084015260608301526001600160801b038116608083015260801c60a0820152f35b3461010f57602036600319011261010f57600435806000526003602052604060002060405161069e81610a6a565b60018060a01b03825416815260018201916040518084602082965493848152019060005260206000209260005b8181106109455750506106e092500384610a9c565b602082019283526002810154604083019081526005600383015492606085019384526004810154608086015201549260a08101946001600160801b038516865260c082019460801c855261073382610c73565b15610934578660005260036020524260026040600020015561075482610c73565b50610777815151936107716107694286610bf7565b915185610bf7565b90610abe565b9260028110156108b05750519384511561089a576020949094015190516107ed946001600160801b0393849391926107bb926001600160a01b039081169116610cf5565b867fd0e1dfa94d54f1181ad0ebd107a1153ca958e9092d4f8e8d6ed4fb8103c217af600080a251169151935116610acb565b81018091116108845742116107fe57005b806000526003602052604060002060008155600181018054906000815581610863575b5050600581600060028194015582600382015582600482015501557fa406223eed305e0e3a1c88b893bde0b54f265678c554293f6e842f74caa9395f600080a2005b6000526020600020908101905b818110156108215760008155600101610870565b634e487b7160e01b600052601160045260246000fd5b634e487b7160e01b600052603260045260246000fd5b9192826108bf91969596610cac565b9260005b8381106108e2575050505050906001600160801b03806107ed936107bb565b60018060a01b038251168351600081518410156109205750868392602061091a9360019660051b0101858060a01b0390511690610cf5565b016108c3565b634e487b7160e01b81526032600452602490fd5b631cbb070960e01b60005260046000fd5b84546001600160a01b03168352600194850194889450602090930192016106cb565b3461010f57604036600319011261010f57600435600052600360205260406000209061099281610a6a565b81546001600160a01b0316815260405160018301805480835260009182526020808320908401929091905b818110610a37576020610a2f8861077189896109db818b0382610a9c565b85820152600560028401549360408301948552600381015460608401526004810154608084015201546001600160801b03811660a083015260801c60c0820152610a2760243582610bf7565b925190610bf7565b604051908152f35b82546001600160a01b03168452602090930192600192830192016109bd565b35906001600160a01b038216820361010f57565b60e0810190811067ffffffffffffffff821117610a8657604052565b634e487b7160e01b600052604160045260246000fd5b90601f8019910116810190811067ffffffffffffffff821117610a8657604052565b9190820391821161088457565b8181029291811591840414171561088457565b35906001600160801b038216820361010f57565b91909160e08184031261010f5760405190610b0c82610a6a565b8193610b1782610a56565b8352602082013567ffffffffffffffff811161010f5782019080601f8301121561010f5781359167ffffffffffffffff8311610a86578260051b9060405193610b636020840186610a9c565b845260208085019282010192831161010f57602001905b828210610bcb5750505060c08092610bc6926020860152604081013560408601526060810135606086015260808101356080860152610bbb60a08201610ade565b60a086015201610ade565b910152565b60208091610bd884610a56565b815201910190610b7a565b356001600160801b038116810361010f5790565b90606082015190818110610c6b57610c2691610c1291610abe565b6001600160801b0360a08401511690610cac565b906001600160801b0360c082015116808310600014610c5d575060018201809211610884576080610c5a92915b0151610acb565b90565b610c5a925060809091610c53565b505050600090565b60608101514210610ca65780610c9b610c936040610ca094015183610bf7565b914290610bf7565b610abe565b50600190565b50600090565b8115610cb6570490565b634e487b7160e01b600052601260045260246000fd5b6000546001600160a01b03163303610ce057565b63118cdaa760e01b6000523360045260246000fd5b60405163a9059cbb60e01b60208201526001600160a01b039092166024830152604480830193909352918152610d3591610d30606483610a9c565b610d7b565b565b6040516323b872dd60e01b60208201526001600160a01b039283166024820152929091166044830152606480830193909352918152610d3591610d30608483610a9c565b906000602091828151910182855af115610dd6576000513d610dcd57506001600160a01b0381163b155b610dac5750565b635274afe760e01b60009081526001600160a01b0391909116600452602490fd5b60011415610da5565b6040513d6000823e3d90fdfea26469706673582212209d826d71679d70bce509e063c9569a6b352db5ebf176eb8fbb68d7ddf5f4756564736f6c634300081d0033",
+  "deployedBytecode": "0x608080604052600436101561001357600080fd5b60003560e01c9081632272d907146109675750806337bdc99b1461067057806342d00501146105fe578063647846a5146105d557806369e15404146105b7578063715018a61461055e5780638da5cb5b14610535578063dbc035ca146101145763f2fde38b1461008257600080fd5b3461010f57602036600319011261010f576004356001600160a01b0381169081900361010f576100b0610ccc565b80156100f957600080546001600160a01b03198116831782556001600160a01b0316907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09080a3005b631e4fbdf760e01b600052600060045260246000fd5b600080fd5b3461010f57602036600319011261010f5760043567ffffffffffffffff811161010f578060040181360360e060031982011261010f576101543683610af2565b60208101515115159081610521575b81610513575b816104fc575b816104e5575b816104d7575b50156104c65760005460025460015490916101a69183916001600160a01b0390811691339116610d37565b6001546040519182526001600160a01b03169033907f945458c62aa39df7a4d87d6c4dbaaab7de5d870c9a1fe40e2b7571d84f158a8d90602090a360405160208101904682524360408201524260608201524460808201526bffffffffffffffffffffffff193360601b1660a082015260a0815261022560c082610a9c565b519020906102666102363685610af2565b61025c60018060a01b038251169160806001600160801b0360c083015116910151610acb565b9030903390610d37565b600082815260036020526040902083356001600160a01b0381169081900361010f5781546001600160a01b03191617815560018101946024810135926022190183121561010f578281019560048701359667ffffffffffffffff881161010f57602401968060051b3603881361010f576000976801000000000000000082116104b257825482845580831061048c575b50918852602088209188905b82821061046757505050506044810135806002840155606482013580600385015560848301359182600486015560a48401936001600160801b0361034586610be3565b1695600560c48301976001600160801b03196103608a610be3565b60801b1617910155604051602081526101008101999097906001600160a01b039061038a90610a56565b166020890152016024600482013591019867ffffffffffffffff8211610463578160051b36038a1361046357819060e060408a015252610120870198908a5b8181106104375750505061041d6001600160801b039461042894889794879460607f76c868619214808c7d24612303228783ea40797d4cbe9bee69497462450d726d9b0152608089015260a0880152610ade565b1660c0850152610ade565b1660e08201528033940390a380f35b919990919060019060209081906001600160a01b036104558f610a56565b168152019b019291016103c9565b8a80fd5b8035916001600160a01b03831683036104635760206001920192818601550190610302565b838a528260208b2091820191015b8181106104a757506102f6565b8a815560010161049a565b634e487b7160e01b89526041600452602489fd5b6327a449e360e01b60005260046000fd5b60809150015115158461017b565b60c08101516001600160801b031615159150610175565b60a08101516001600160801b03161515915061016f565b606081015142109150610169565b80516001600160a01b031615159150610163565b3461010f57600036600319011261010f576000546040516001600160a01b039091168152602090f35b3461010f57600036600319011261010f57610577610ccc565b600080546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b3461010f57600036600319011261010f576020600254604051908152f35b3461010f57600036600319011261010f576001546040516001600160a01b039091168152602090f35b3461010f57602036600319011261010f57600435600052600360205260c0604060002060018060a01b0381541690600281015490600381015460056004830154920154926040519485526020850152604084015260608301526001600160801b038116608083015260801c60a0820152f35b3461010f57602036600319011261010f57600435806000526003602052604060002060405161069e81610a6a565b60018060a01b03825416815260018201916040518084602082965493848152019060005260206000209260005b8181106109455750506106e092500384610a9c565b602082019283526002810154604083019081526005600383015492606085019384526004810154608086015201549260a08101946001600160801b038516865260c082019460801c855261073382610c73565b15610934578660005260036020524260026040600020015561075482610c73565b50610777815151936107716107694286610bf7565b915185610bf7565b90610abe565b9260028110156108b05750519384511561089a576020949094015190516107ed946001600160801b0393849391926107bb926001600160a01b039081169116610cf5565b867fd0e1dfa94d54f1181ad0ebd107a1153ca958e9092d4f8e8d6ed4fb8103c217af600080a251169151935116610acb565b81018091116108845742116107fe57005b806000526003602052604060002060008155600181018054906000815581610863575b5050600581600060028194015582600382015582600482015501557fa406223eed305e0e3a1c88b893bde0b54f265678c554293f6e842f74caa9395f600080a2005b6000526020600020908101905b818110156108215760008155600101610870565b634e487b7160e01b600052601160045260246000fd5b634e487b7160e01b600052603260045260246000fd5b9192826108bf91969596610cac565b9260005b8381106108e2575050505050906001600160801b03806107ed936107bb565b60018060a01b038251168351600081518410156109205750868392602061091a9360019660051b0101858060a01b0390511690610cf5565b016108c3565b634e487b7160e01b81526032600452602490fd5b631cbb070960e01b60005260046000fd5b84546001600160a01b03168352600194850194889450602090930192016106cb565b3461010f57604036600319011261010f57600435600052600360205260406000209061099281610a6a565b81546001600160a01b0316815260405160018301805480835260009182526020808320908401929091905b818110610a37576020610a2f8861077189896109db818b0382610a9c565b85820152600560028401549360408301948552600381015460608401526004810154608084015201546001600160801b03811660a083015260801c60c0820152610a2760243582610bf7565b925190610bf7565b604051908152f35b82546001600160a01b03168452602090930192600192830192016109bd565b35906001600160a01b038216820361010f57565b60e0810190811067ffffffffffffffff821117610a8657604052565b634e487b7160e01b600052604160045260246000fd5b90601f8019910116810190811067ffffffffffffffff821117610a8657604052565b9190820391821161088457565b8181029291811591840414171561088457565b35906001600160801b038216820361010f57565b91909160e08184031261010f5760405190610b0c82610a6a565b8193610b1782610a56565b8352602082013567ffffffffffffffff811161010f5782019080601f8301121561010f5781359167ffffffffffffffff8311610a86578260051b9060405193610b636020840186610a9c565b845260208085019282010192831161010f57602001905b828210610bcb5750505060c08092610bc6926020860152604081013560408601526060810135606086015260808101356080860152610bbb60a08201610ade565b60a086015201610ade565b910152565b60208091610bd884610a56565b815201910190610b7a565b356001600160801b038116810361010f5790565b90606082015190818110610c6b57610c2691610c1291610abe565b6001600160801b0360a08401511690610cac565b906001600160801b0360c082015116808310600014610c5d575060018201809211610884576080610c5a92915b0151610acb565b90565b610c5a925060809091610c53565b505050600090565b60608101514210610ca65780610c9b610c936040610ca094015183610bf7565b914290610bf7565b610abe565b50600190565b50600090565b8115610cb6570490565b634e487b7160e01b600052601260045260246000fd5b6000546001600160a01b03163303610ce057565b63118cdaa760e01b6000523360045260246000fd5b60405163a9059cbb60e01b60208201526001600160a01b039092166024830152604480830193909352918152610d3591610d30606483610a9c565b610d7b565b565b6040516323b872dd60e01b60208201526001600160a01b039283166024820152929091166044830152606480830193909352918152610d3591610d30608483610a9c565b906000602091828151910182855af115610dd6576000513d610dcd57506001600160a01b0381163b155b610dac5750565b635274afe760e01b60009081526001600160a01b0391909116600452602490fd5b60011415610da5565b6040513d6000823e3d90fdfea26469706673582212209d826d71679d70bce509e063c9569a6b352db5ebf176eb8fbb68d7ddf5f4756564736f6c634300081d0033",
+  "devdoc": {
+    "author": "Alejandro Virelles <thesnakewitcher@gmail.com>",
+    "details": "Each vesting occupies 5+b slots in memory, where b is the number of beneficiaries",
+    "errors": {
+      "OwnableInvalidOwner(address)": [
+        {
+          "details": "The owner is not a valid owner account. (eg. `address(0)`)"
+        }
+      ],
+      "OwnableUnauthorizedAccount(address)": [
+        {
+          "details": "The caller account is not authorized to perform an operation."
+        }
+      ],
+      "SafeERC20FailedOperation(address)": [
+        {
+          "details": "An operation with an ERC-20 token failed."
+        }
+      ]
+    },
+    "kind": "dev",
+    "methods": {
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "release(uint256)": {
+        "details": "to use it as getter use it with `staticCall` or check https://github.com/gnosis/util-contracts/blob/main/contracts/storage/StorageAccessible.sol"
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "title": "VestingManager",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "notice": "A contract to manage vestings of ERC20 tokens ",
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 8,
+        "contract": "contracts/VestingManager.sol:VestingManager",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 941,
+        "contract": "contracts/VestingManager.sol:VestingManager",
+        "label": "_feeToken",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_contract(IERC20)315"
+      },
+      {
+        "astId": 894,
+        "contract": "contracts/VestingManager.sol:VestingManager",
+        "label": "_feeAmount",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 1081,
+        "contract": "contracts/VestingManager.sol:VestingManager",
+        "label": "vestingPeriods",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_uint256,t_struct(VestingPeriod)1331_storage)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_address)dyn_storage": {
+        "base": "t_address",
+        "encoding": "dynamic_array",
+        "label": "address[]",
+        "numberOfBytes": "32"
+      },
+      "t_contract(IERC20)315": {
+        "encoding": "inplace",
+        "label": "contract IERC20",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_uint256,t_struct(VestingPeriod)1331_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct VestingPeriod)",
+        "numberOfBytes": "32",
+        "value": "t_struct(VestingPeriod)1331_storage"
+      },
+      "t_struct(VestingPeriod)1331_storage": {
+        "encoding": "inplace",
+        "label": "struct VestingPeriod",
+        "members": [
+          {
+            "astId": 1317,
+            "contract": "contracts/VestingManager.sol:VestingManager",
+            "label": "token",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_contract(IERC20)315"
+          },
+          {
+            "astId": 1320,
+            "contract": "contracts/VestingManager.sol:VestingManager",
+            "label": "beneficiaries",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_address)dyn_storage"
+          },
+          {
+            "astId": 1322,
+            "contract": "contracts/VestingManager.sol:VestingManager",
+            "label": "lastClaim",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1324,
+            "contract": "contracts/VestingManager.sol:VestingManager",
+            "label": "startTime",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1326,
+            "contract": "contracts/VestingManager.sol:VestingManager",
+            "label": "cycleAmount",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1328,
+            "contract": "contracts/VestingManager.sol:VestingManager",
+            "label": "cycleDuration",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_uint128"
+          },
+          {
+            "astId": 1330,
+            "contract": "contracts/VestingManager.sol:VestingManager",
+            "label": "cycleNumber",
+            "offset": 16,
+            "slot": "5",
+            "type": "t_uint128"
+          }
+        ],
+        "numberOfBytes": "192"
+      },
+      "t_uint128": {
+        "encoding": "inplace",
+        "label": "uint128",
+        "numberOfBytes": "16"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}
