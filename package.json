@@ -1,7 +1,7 @@
 {
   "name": "@thesnakewitcher/vesting-manager",
   "author": "Alex Virelles <thesnakewitcher@gmail.com>",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
   "type": "module",
   "main": "dist/src/index.js",
@@ -10,7 +10,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile": "pnpm hardhat compile",
     "build": "tsc",
-    "prepublishOnly": "pnpm compile && pnpm build"
+    "prepublishOnly": "pnpm compile && pnpm build",
+    "release:create": "VERSION=$(git describe main --tags) ; git push origin $VERSION ; gh release create $VERSION --generate-notes",
+    "release:publish": "pnpm publish --no-git-checks",
+    "release": "pnpm release:create && pnpm release:publish"
   },
   "license": "ISC",
   "packageManager": "pnpm@10.11.0",
