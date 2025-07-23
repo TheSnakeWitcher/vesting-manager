@@ -23,18 +23,18 @@ library VestingMath {
         period.token.safeTransferFrom(from, holder, maxToRelease(period)) ;
     }
 
-    function release(VestingPeriod memory period, address from) internal {
+    function release(VestingPeriod memory period) internal {
         checkRelease(period);
         uint256 beneficiariesNumber = period.beneficiaries.length ;
 
+        uint256 cycleAmount = toReleaseAt(period, block.timestamp) - toReleaseAt(period, period.lastClaim) ;
         if (beneficiariesNumber < 2) {
             address to = period.beneficiaries[0] ;
-            period.token.safeTransferFrom(from, to, period.cycleAmount) ;
+            period.token.safeTransfer(to, cycleAmount) ;
         } else {
-            uint256 amountPerBeneficiary = period.cycleAmount / beneficiariesNumber ;
+            uint256 amountPerBeneficiary = cycleAmount / beneficiariesNumber ;
             for(uint256 i ; i < beneficiariesNumber ; ++i ) {
-                period.token.safeTransferFrom(
-                    from,
+                period.token.safeTransfer(
                     period.beneficiaries[i],
                     amountPerBeneficiary
                 ) ;
@@ -59,7 +59,7 @@ library VestingMath {
 
         uint256 released = toReleaseAt(period, period.lastClaim) ;
         uint256 toRelease = toReleaseAt(period, block.timestamp) ;
-        if (toRelease - released == period.cycleAmount) return false ;
+        if (toRelease - released < 0) return false ;
 
         return true ;
     }

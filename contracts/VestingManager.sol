@@ -44,7 +44,7 @@ contract VestingManager is Ownable, FeeChargerERC20 {
         require(period.checkRelease(), InvalidRelease()) ;
         vestingPeriods[id].lastClaim = block.timestamp  ;
 
-        period.release(address(this)) ;
+        period.release() ;
         emit VestingClaimed(id) ;
 
         if (period.endedAt(block.timestamp)) {
