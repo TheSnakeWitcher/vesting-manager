@@ -2,8 +2,7 @@
   "name": "@thesnakewitcher/vesting-manager",
   "author": "Alex Virelles <thesnakewitcher@gmail.com>",
   "version": "0.1.0",
-  "description": "",
-  "type": "module",
+  "description": "A decentralized vesting service",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "scripts": {
@@ -12,10 +11,10 @@
     "build": "tsc",
     "prepublishOnly": "pnpm compile && pnpm build",
     "release:create": "VERSION=$(git describe main --tags) ; git push origin $VERSION ; gh release create $VERSION --generate-notes",
-    "release:publish": "pnpm publish --no-git-checks",
+    "release:publish": "pnpm publish --no-git-checks --access public" ,
     "release": "pnpm release:create && pnpm release:publish"
   },
-  "license": "ISC",
+  "license": "BUSL",
   "packageManager": "pnpm@10.11.0",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^6.1.0",
