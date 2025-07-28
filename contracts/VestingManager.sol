@@ -55,6 +55,14 @@ contract VestingManager is Ownable, FeeChargerERC20 {
         }
     }
 
+    function setFeeToken(address feeToken_) external onlyOwner {
+        _setFeeToken(feeToken_);
+    }
+
+    function setFeeAmount(uint256 feeAmount_) external onlyOwner {
+        _setFeeAmount(feeAmount_);
+    }
+
     function releasable(uint256 id, uint256 timestamp) external view returns (uint256) {
         VestingPeriod memory period = vestingPeriods[id] ;
         uint256 amount = period.toReleaseAt(timestamp) - period.toReleaseAt(period.lastClaim) ;
