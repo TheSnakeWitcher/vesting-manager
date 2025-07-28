@@ -33,7 +33,10 @@ const config: HardhatUserConfig = {
     },
     gobind: {
         outdir: "./data/bindings",
-        onlyFiles: [ "contracts/VestingManager.sol" ],
+        onlyFiles: [
+            "contracts/VestingManager.sol",
+            "contracts/FaucetToken.sol"
+        ],
     },
     networks: {
         bsc: {
