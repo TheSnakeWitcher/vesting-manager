@@ -24,6 +24,7 @@ contract VestingManager is Ownable, FeeChargerERC20 {
     event VestingEnded(uint256 indexed id);
 
     error InvalidCreationParams();
+    error InvalidPeriod();
     error InvalidRelease();
 
     constructor(address feeToken_, uint256 feeAmount_) Ownable(_msgSender()) FeeChargerERC20(feeToken_, feeAmount_) {}
@@ -41,9 +42,10 @@ contract VestingManager is Ownable, FeeChargerERC20 {
     /// @dev to use it as getter use it with `staticCall` or check https://github.com/gnosis/util-contracts/blob/main/contracts/storage/StorageAccessible.sol
     function release(uint256 id) external {
         VestingPeriod memory period = vestingPeriods[id] ;
+        require(period.checkExists(), InvalidPeriod());
         require(period.checkRelease(), InvalidRelease()) ;
-        vestingPeriods[id].lastClaim = block.timestamp  ;
 
+        vestingPeriods[id].lastClaim = block.timestamp  ;
         period.release() ;
         emit VestingClaimed(id) ;
 

@@ -3,6 +3,7 @@ pragma solidity ^0.8.0 ;
 pragma abicoder v2 ;
 
 import { IERC20, SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol" ;
+import { console } from "hardhat/console.sol" ;
 
 struct VestingPeriod {
     IERC20 token ;
@@ -24,7 +25,6 @@ library VestingMath {
     }
 
     function release(VestingPeriod memory period) internal {
-        checkRelease(period);
         uint256 beneficiariesNumber = period.beneficiaries.length ;
 
         uint256 cycleAmount = toReleaseAt(period, block.timestamp) - toReleaseAt(period, period.lastClaim) ;
@@ -59,9 +59,13 @@ library VestingMath {
 
         uint256 released = toReleaseAt(period, period.lastClaim) ;
         uint256 toRelease = toReleaseAt(period, block.timestamp) ;
-        if (toRelease - released < 0) return false ;
+        if (toRelease - released <= 0) return false ;
 
         return true ;
+    }
+
+    function checkExists(VestingPeriod memory period) internal pure returns (bool) {
+        return address(period.token) != address(0) ;
     }
 
     /// @notice determines whether a vesting period is ended for timestamp 'at'
@@ -100,5 +104,4 @@ library VestingMath {
     function maxToRelease(VestingPeriod memory period) internal pure returns (uint256) {
         return cycleAmountFor(period, period.cycleNumber) ;
     }
-
 }
