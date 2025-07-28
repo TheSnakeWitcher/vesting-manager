@@ -1,4 +1,9 @@
-import { Contract, type ContractRunner } from "ethers"
+import {
+    Contract,
+    EventLog,
+    type ContractRunner,
+    type ContractTransactionReceipt,
+} from "ethers"
 import type { Deployments } from "hardhat-inspect"
 
 import type { VestingManager as VestingManagerContract, ERC20 } from "../typechain-types"
@@ -24,6 +29,12 @@ export function vestingFormToPeriod(form: IVestingForm): VestingPeriodStruct {
         cycleAmount: Math.round(form.amount / cycleNumber),
         lastClaim: 0,
     }
+}
+
+export function getIdFromReceipt(receipt: ContractTransactionReceipt | null) : string {
+    const logs = receipt?.logs!
+    const log = (logs[logs.length-1] as EventLog) ;
+    return log.args[0]
 }
 
 export class VestingManager {
