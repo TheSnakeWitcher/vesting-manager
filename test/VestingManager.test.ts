@@ -58,6 +58,36 @@ describe("VestingManager contract", function () {
 
     beforeEach( async () => loadFixture(deployFixture))
 
+    describe("fee()", () => {
+
+        it("feeToken()", async () => {
+            const feeTokenAddr = await testContract.feeToken()
+            expect(feeTokenAddr).to.equal(await feeToken.getAddress())
+        })
+
+        it("setFeeToken() fails change fee correctly", async () => {
+            await testContract.connect(owner).setFeeToken(await vestingToken.getAddress())
+            const feeTokenAddr = await testContract.feeToken()
+            expect(feeTokenAddr).to.equal(await vestingToken.getAddress())
+        })
+
+        it("setFeeToken() fails to be called by user", async () => {
+            await expect(testContract.connect(user).setFeeToken(await vestingToken.getAddress()))
+                .to.be.revertedWithCustomError(testContract, errors.OwnableUnauthorizedAccount)
+        })
+
+        it("setFeeAmount() fails change fee correctly", async () => {
+            const fee = 10
+            await testContract.connect(owner).setFeeAmount(fee)
+            expect(await testContract.feeAmount()).to.equal(fee)
+        })
+
+        it("setFeeAmount() fails to be called by user", async () => {
+            await expect(testContract.connect(user).setFeeAmount(await vestingToken.getAddress()))
+                .to.be.revertedWithCustomError(testContract, errors.OwnableUnauthorizedAccount)
+        })
+    })
+
     describe("create()", () => {
 
         it("charge fees", async () => {
