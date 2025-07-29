@@ -56,7 +56,7 @@ export class VestingManager {
         const feeToken = await this.contract.feeToken()
         const feeAmount = await this.contract.feeAmount()
         const erc20Fee = new Contract(feeToken,ERC20Abi, this.contract.runner) as unknown as ERC20
-        const feeTx = (await erc20Fee.approve(this.contract.getAddress(), feeAmount)).hash
+        const feeTx = (await erc20Fee.approve(await this.contract.getAddress(), feeAmount)).hash
         console.log('approve fee tx: ', feeTx)
 
         const erc20Vesting = new Contract(period.token.toString(), ERC20Abi, this.contract.runner) as unknown as ERC20
