@@ -69,6 +69,13 @@ export class VestingManager {
 
         const chainId = Number((await this.contract.runner?.provider?.getNetwork())?.chainId)
         const body = JSON.stringify({ tx, chainId })
-        await fetch("https://opsljrtyq0.execute-api.us-east-2.amazonaws.com/schedule", { method: "POST", body });
+        try {
+            await fetch("https://opsljrtyq0.execute-api.us-east-2.amazonaws.com/schedule", {
+                method: "POST",
+                body,
+            });
+        } catch(err) {
+            console.log(err)
+        }
     }
 }
