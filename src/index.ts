@@ -1,6 +1,7 @@
 import {
     Contract,
     EventLog,
+    parseUnits,
     type ContractRunner,
     type ContractTransactionReceipt,
 } from "ethers"
@@ -60,7 +61,8 @@ export class VestingManager {
         console.log('approve fee tx: ', feeTx)
 
         const erc20Vesting = new Contract(period.token.toString(), ERC20Abi, this.contract.runner) as unknown as ERC20
-        const vestingTx = await erc20Vesting.approve(await this.contract.getAddress(), form.amount)
+        const vestAmount = parseUnits(form.amount.toString(), await erc20Vesting.decimals())
+        const vestingTx = await erc20Vesting.approve(await this.contract.getAddress(), vestAmount)
         const vestingTxHash = (await vestingTx.wait(3))?.hash
         console.log('approve vestingTx tx: ', vestingTxHash)
 
