@@ -33,6 +33,9 @@ importers:
       hardhat-inspect:
         specifier: ^0.1.15
         version: 0.1.15(hardhat-deploy@1.0.4)(hardhat@2.24.0(ts-node@10.9.2(@types/node@22.15.21)(typescript@5.8.3))(typescript@5.8.3))
+      hardhat-neovim:
+        specifier: ^0.3.3
+        version: 0.3.3
       viem:
         specifier: ^2.30.0
         version: 2.30.0(typescript@5.8.3)
@@ -1168,6 +1171,9 @@ packages:
     peerDependencies:
       hardhat: ^2.0.0
       hardhat-deploy: ^0.12.0
+
+  hardhat-neovim@0.3.3:
+    resolution: {integrity: sha512-Uu4ML8iI9oL3Gty3RR0USvXxzXNpObRnuB8otZut+XNNALUAskiUHS4ITuKTKlGMtwJoDkYHmvRqPf+pgKudXA==}
 
   hardhat@2.24.0:
     resolution: {integrity: sha512-wDkD5GPmttYv21MR7tGDkyQ22tO2V86OEV8pA7NcXWYUpibe8XZ2EanXCeRHO61vwEx0f7/M+NqrhJwasaNMJg==}
@@ -3651,6 +3657,8 @@ snapshots:
     dependencies:
       hardhat: 2.24.0(ts-node@10.9.2(@types/node@22.15.21)(typescript@5.8.3))(typescript@5.8.3)
       hardhat-deploy: 1.0.4
+
+  hardhat-neovim@0.3.3: {}
 
   hardhat@2.24.0(ts-node@10.9.2(@types/node@22.15.21)(typescript@5.8.3))(typescript@5.8.3):
     dependencies:
