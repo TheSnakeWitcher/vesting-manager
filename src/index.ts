@@ -11,7 +11,7 @@ import type { VestingManager as VestingManagerContract, ERC20 } from "../typecha
 import type { VestingPeriodStruct } from "../typechain-types/contracts/VestingManager"
 import { VestingManager as VestingManagerDeployments } from "../data/deployments.json"
 import { abi as  VestingManagerAbi } from "../artifacts/contracts/VestingManager.sol/VestingManager.json"
-import { abi as  ERC20Abi } from "../artifacts/@openzeppelin/contracts/token/ERC20/IERC20.sol/IERC20.json"
+import { abi as  ERC20Abi } from "../artifacts/@openzeppelin/contracts/token/ERC20/ERC20.sol/ERC20.json"
 
 export interface IVestingForm {
     token: string,
